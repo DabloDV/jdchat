@@ -12,25 +12,29 @@ main=Blueprint('usuario_blueprint',__name__)
 @main.route('/')
 def inicio():
     try:
-        usuarios= UsuarioModel.get_usuarios()
-        este= usuarios[0]
-        nombre = este.get('nombre')
-        nombre= re.sub(' +', '', nombre)
-        if len(usuarios) < 1:
+        nombre()
+        if len(get_usuario()) < 1:
             return jsonify({'message': '¡Hola! Parece que eres nuev@ por aquí. ¿Por qué no comienzas por decirnos tu nombre?'}) #Si no hay un usuario, se crea uno de inmediato. Esto deberá coordinarse desde el frontend
         else:
-            return jsonify({'message': '¡Bienvenid@, '+nombre+'!'})
+            return jsonify({'message': '¡Bienvenid@, '+nombre()+'!'})
 
     except Exception as ex:
         return jsonify({'message': str(ex)}),500
 
+def nombre():
+    get_usuario()
+    este= get_usuario()[0]
+    nombre = este.get('nombre')
+    nombre= re.sub(' +', '', nombre)
+    return str(nombre)
 
-@main.route('/<id>')
-def get_usuario(id):
+
+@main.route('/user')
+def get_usuario():
     try:
-        usuario= UsuarioModel.get_usuario(id)
+        usuario= UsuarioModel.get_usuarios()
         if usuario != None:
-            return jsonify(usuario)
+            return usuario
         else: 
             return jsonify({}), 404
     except Exception as ex:
