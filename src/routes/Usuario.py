@@ -1,5 +1,6 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, redirect, request, url_for
 import uuid
+import re
 #Entities
 from models.entities.Usuario import Usuario
 
@@ -9,12 +10,20 @@ from models.UsuarioModel import UsuarioModel
 main=Blueprint('usuario_blueprint',__name__)
 
 @main.route('/')
-def get_usuarios():
+def inicio():
     try:
         usuarios= UsuarioModel.get_usuarios()
-        return jsonify(usuarios)
+        este= usuarios[0]
+        nombre = este.get('nombre')
+        nombre= re.sub(' +', '', nombre)
+        if len(usuarios) < 1:
+            return jsonify({'message': '¡Hola! Parece que eres nuev@ por aquí. ¿Por qué no comienzas por decirnos tu nombre?'}) #Si no hay un usuario, se crea uno de inmediato. Esto deberá coordinarse desde el frontend
+        else:
+            return jsonify({'message': '¡Bienvenid@, '+nombre+'!'})
+
     except Exception as ex:
         return jsonify({'message': str(ex)}),500
+
 
 @main.route('/<id>')
 def get_usuario(id):
@@ -33,15 +42,15 @@ def get_usuario(id):
 def add_usuario():
     try:
         
-        pais=  request.json['pais']
+        nombre=  request.json['nombre']
         id = uuid.uuid4() 
-        usuario = Usuario(str(id), pais) 
+        usuario = Usuario(str(id), nombre) 
         affected_rows =  UsuarioModel.add_usuario(usuario)
         print(usuario.id)
         if affected_rows == 1:
-            return jsonify(usuario.id)
+            return jsonify({'message': "¿En serio? Ese nombre... Está muy bien, supongo..."})
         else:
-            return jsonify({'message': "Error al crear"}), 500
+            return jsonify({'message': "Hubo un error al crear tu nombre."}), 500
 
     except Exception as ex:
         return jsonify({'message': str(ex)}),500
@@ -50,14 +59,14 @@ def add_usuario():
 def update_usuario(id):
     try:
         
-        pais=  request.json['pais'] 
-        usuario = Usuario(id, pais) 
+        nombre=  request.json['nombre'] 
+        usuario = Usuario(id, nombre) 
         affected_rows =  UsuarioModel.update_usuario(usuario)
         print(usuario.id)
         if affected_rows == 1:
             return jsonify(usuario.id)
         else:
-            return jsonify({'message': "Error al actualizar país."}), 500
+            return jsonify({'message': "Error al actualizar nombre."}), 500
 
     except Exception as ex:
         return jsonify({'message': str(ex)}),500

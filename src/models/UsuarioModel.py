@@ -11,7 +11,7 @@ class UsuarioModel():
             usuarios = []
 
             with connection.cursor() as cursor:
-                cursor.execute("SELECT id, pais FROM usuarios ORDER BY id ASC")
+                cursor.execute("SELECT id, nombre FROM usuarios ORDER BY id ASC")
                 resultset = cursor.fetchall()
 
                 for row in resultset:
@@ -31,7 +31,7 @@ class UsuarioModel():
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("SELECT id, pais FROM usuarios WHERE id = %s", (id,))
+                cursor.execute("SELECT id, nombre FROM usuarios WHERE id = %s", (id,))
                 row = cursor.fetchone()
 
                 usuario = None
@@ -52,8 +52,8 @@ class UsuarioModel():
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("""INSERT INTO usuarios (id, pais) 
-                                VALUES(%s, %s)""", (usuario.id, usuario.pais))
+                cursor.execute("""INSERT INTO usuarios (id, nombre) 
+                                VALUES(%s, %s)""", (usuario.id, usuario.nombre))
                 affected_rows=cursor.rowcount
                 connection.commit()
             connection.close()
@@ -69,8 +69,8 @@ class UsuarioModel():
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("""UPDATE usuarios SET pais = %s
-                                WHERE id = %s""", (usuario.pais, usuario.id))
+                cursor.execute("""UPDATE usuarios SET nombre = %s
+                                WHERE id = %s""", (usuario.nombre, usuario.id))
                 affected_rows=cursor.rowcount
                 connection.commit()
             connection.close()

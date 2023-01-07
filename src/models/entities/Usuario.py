@@ -1,11 +1,11 @@
 class Usuario():
 
-    def __init__(self, id, pais=None) -> None:
+    def __init__(self, id, nombre=None) -> None:
         self.id = id
-        self.pais = pais
+        self.nombre = nombre
 
     def to_JSON(self):
         return {
             'id': self.id, 
-            'pais': self.pais
+            'nombre': self.nombre
             }
